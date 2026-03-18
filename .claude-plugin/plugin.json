@@ -1,9 +1,0 @@
-{
-  "name": "shuck-file",
-  "version": "1.0.0",
-  "description": "Convert documents (.docx, .pdf, .xlsx, .pptx, .csv) to clean Markdown for AI agents and LLMs.",
-  "author": {
-    "name": "Shan"
-  },
-  "license": "MIT"
-}

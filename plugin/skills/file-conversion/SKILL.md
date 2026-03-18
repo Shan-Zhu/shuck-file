@@ -36,7 +36,7 @@ Convert documents to clean Markdown that AI agents can read and analyze.
 ### Step 1: Probe with `--meta`
 
 ```bash
-python /path/to/shuck-file/shuck.py "document.xlsx" --meta
+python "{{PLUGIN_DIR}}/shuck.py" "document.xlsx" --meta
 ```
 
 Returns JSON with file info and estimated token count. Use this to decide whether to convert the full file or warn the user about large documents.
@@ -44,7 +44,7 @@ Returns JSON with file info and estimated token count. Use this to decide whethe
 ### Step 2: Convert
 
 ```bash
-python /path/to/shuck-file/shuck.py "document.xlsx"
+python "{{PLUGIN_DIR}}/shuck.py" "document.xlsx"
 ```
 
 Output goes to stdout with YAML frontmatter. Capture directly — no need to write to a file first.
