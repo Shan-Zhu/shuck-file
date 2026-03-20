@@ -5,7 +5,6 @@
 # shuck-file
 
 > AI doesn't eat shells.
-> 
 > Crack any file open for your AI.
 
 **shuck-file** converts documents to clean Markdown for AI agents and LLMs. Small files output directly; large files return a **document map** with section summaries, token counts, and actionable next steps — so agents only pull what they need.
