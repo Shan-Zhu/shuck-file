@@ -4,7 +4,11 @@
 
 # shuck-file
 
-> 帮AI剥开任何文件。
+[![PyPI](https://img.shields.io/pypi/v/shuck-file)](https://pypi.org/project/shuck-file/)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-available-blue)](https://registry.modelcontextprotocol.io/servers/io.github.Shan-Zhu%2Fshuck-file)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+> Any file in, Markdown out — read only what matters.
 
 **shuck-file** 将文档转换为干净的 Markdown，专为 AI agent 和大语言模型设计。小文件直接输出完整内容；大文件自动返回**文档地图**，包含章节摘要、token 估算和可操作的下一步建议——让 agent 按需提取，节省上下文窗口。
 
@@ -30,9 +34,8 @@ AI agent 需要一个**感知上下文**的桥梁：
 ## 快速开始
 
 ```bash
-git clone https://github.com/Shan-Zhu/shuck-file.git
-pip install -r requirements.txt
-python plugin/shuck.py report.docx
+pip install shuck-file
+shuck report.docx
 ```
 
 ## 使用方法
@@ -144,35 +147,61 @@ shuck --formats
 
 ## 安装
 
-### 作为 Claude Code 插件
+### pip（推荐）
+
+```bash
+pip install shuck-file
+```
+
+安装后同时提供 `shuck` CLI 命令和 MCP Server。
+
+### MCP Server
+
+安装后，在任意支持 MCP 协议的 AI 工具中配置：
+
+**Claude Code**
+
+```bash
+claude mcp add shuck-file -- shuck-file
+```
+
+**Cursor / Windsurf / 其他 MCP 客户端**
+
+在 MCP 配置文件中添加：
+
+```json
+{
+  "mcpServers": {
+    "shuck-file": {
+      "command": "shuck-file",
+      "args": []
+    }
+  }
+}
+```
+
+也可以直接在 [MCP Registry](https://registry.modelcontextprotocol.io/servers/io.github.Shan-Zhu%2Fshuck-file) 一键安装。
+
+### Claude Code 插件
 
 ```bash
 claude plugin add /path/to/shuck-file
 ```
 
-### 独立使用
+### 源码安装
 
 ```bash
 git clone https://github.com/Shan-Zhu/shuck-file.git
 cd shuck-file
-pip install -r requirements.txt
-```
-
-### 按格式最小安装
-
-```bash
-pip install python-docx      # 仅 Word
-pip install pdfplumber        # 仅 PDF
-pip install openpyxl          # 仅 Excel
-pip install python-pptx       # 仅 PowerPoint
-# CSV 无需额外依赖
+pip install -e .
 ```
 
 ## 架构
 
 ```
-plugin/
-├── shuck.py              # 命令行入口
+src/shuck_file/
+├── cli.py                # CLI 入口
+├── server.py             # MCP Server（FastMCP）
 ├── core/
 │   ├── router.py          # 自动路由逻辑
 │   ├── segmenter.py       # 文档分段
@@ -188,12 +217,8 @@ plugin/
 │   ├── xlsx_ext.py        # Excel 提取器
 │   ├── pptx_ext.py        # PowerPoint 提取器
 │   └── csv_ext.py         # CSV 提取器
-tests/
-├── test_extractors.py     # 39 项测试
-├── test_router.py
-├── test_segmenter.py
-├── test_budget.py
-└── test_grep.py
+plugin/                    # Claude Code 插件包装层
+tests/                     # 39 项测试
 ```
 
 ## 许可证

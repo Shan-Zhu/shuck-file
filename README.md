@@ -4,7 +4,11 @@
 
 # shuck-file
 
-> AI doesn't eat shells.
+[![PyPI](https://img.shields.io/pypi/v/shuck-file)](https://pypi.org/project/shuck-file/)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-available-blue)](https://registry.modelcontextprotocol.io/servers/io.github.Shan-Zhu%2Fshuck-file)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+> Any file in, Markdown out — read only what matters.
 
 **shuck-file** converts documents to clean Markdown for AI agents and LLMs. Small files output directly; large files return a **document map** with section summaries, token counts, and actionable next steps — so agents only pull what they need.
 
@@ -27,12 +31,35 @@ AI agents need a bridge that's **context-aware**:
 | PowerPoint | `.pptx` | python-pptx | Titles, text, tables, speaker notes |
 | CSV | `.csv` | stdlib | All rows/columns as a table |
 
-## Quick Start
+## Installation
+
+### Via pip (recommended)
+
+```bash
+pip install shuck-file
+```
+
+This installs the `shuck` CLI command and the MCP server.
+
+### From source
 
 ```bash
 git clone https://github.com/Shan-Zhu/shuck-file.git
-pip install -r requirements.txt
-python plugin/shuck.py report.docx
+cd shuck-file
+pip install -e .
+```
+
+## Quick Start
+
+```bash
+# Convert a document
+shuck report.docx
+
+# Force full output (bypass map mode)
+shuck large-report.pdf --all
+
+# Search within a document
+shuck report.pdf --grep "revenue"
 ```
 
 ## Usage
@@ -132,47 +159,80 @@ When a file is large, shuck returns a document map:
 - `shuck quarterly-report.pdf --grep "..."` -- search for keywords
 ```
 
+## MCP Server
+
+shuck-file includes an MCP (Model Context Protocol) server, making it available to any MCP-compatible AI tool.
+
+### Claude Code
+
+```bash
+claude mcp add shuck-file -- shuck-file
+```
+
+Or add to your project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "shuck-file": {
+      "command": "shuck-file",
+      "args": []
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "shuck-file": {
+      "command": "shuck-file",
+      "args": []
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add to your MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "shuck-file": {
+      "command": "shuck-file",
+      "args": []
+    }
+  }
+}
+```
+
+### Any MCP Client
+
+shuck-file registers as an MCP server via the `mcp.servers` entry point. Tools exposed:
+
+- **`shuck`** — Convert a document to Markdown with all options (mode, sections, grep, budget, etc.)
+- **`list_formats`** — List supported document formats
+
 ### Claude Code Plugin
 
-Install as a Claude Code plugin, then use `/shuck`:
-
-```
-/shuck path/to/document.xlsx
-```
-
-The skill triggers automatically when you reference a supported document format.
-
-## Installation
-
-### As a Claude Code Plugin
+Install as a Claude Code plugin for the `/shuck` skill:
 
 ```bash
 claude plugin add /path/to/shuck-file
 ```
 
-### Standalone
-
-```bash
-git clone https://github.com/Shan-Zhu/shuck-file.git
-cd shuck-file
-pip install -r requirements.txt
-```
-
-### Minimal Install (by format)
-
-```bash
-pip install python-docx      # .docx only
-pip install pdfplumber        # .pdf only
-pip install openpyxl          # .xlsx only
-pip install python-pptx       # .pptx only
-# .csv needs no extra dependencies
-```
-
 ## Architecture
 
 ```
-plugin/
-├── shuck.py              # CLI entrypoint
+src/shuck_file/
+├── cli.py                # CLI entrypoint
+├── server.py             # MCP Server (FastMCP)
 ├── core/
 │   ├── router.py          # Auto-routing logic
 │   ├── segmenter.py       # Document segmentation
@@ -188,8 +248,9 @@ plugin/
 │   ├── xlsx_ext.py        # Excel extractor
 │   ├── pptx_ext.py        # PowerPoint extractor
 │   └── csv_ext.py         # CSV extractor
+plugin/                    # Claude Code plugin wrapper
 tests/
-├── test_extractors.py     # 39 tests
+├── test_extractors.py
 ├── test_router.py
 ├── test_segmenter.py
 ├── test_budget.py
@@ -199,3 +260,5 @@ tests/
 ## License
 
 MIT
+
+<!-- mcp-name: io.github.Shan-Zhu/shuck-file -->
