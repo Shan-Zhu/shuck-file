@@ -13,8 +13,8 @@
 AI agent 无法读取二进制文档，它们需要一个**感知上下文**的桥梁：
 
 - **小文件** → `shuck report.docx` → 直接输出完整 Markdown
-- **大文件** → `shuck report.docx` → 返回文档地图，附带章节和提取选���
-- **定向提取** → `shuck report.docx --sections s1,s3` → 只提取需要的��分
+- **大文件** → `shuck report.docx` → 返回文档地图，附带章节和提取选择
+- **定向提取** → `shuck report.docx --sections s1,s3` → 只提取需要的关键部分
 - **搜索** → `shuck report.docx --grep "revenue"` → 不读全文也能搜索
 
 ## 支持格式
