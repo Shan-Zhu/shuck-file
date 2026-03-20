@@ -10,7 +10,7 @@
 
 ## Why shuck-file?
 
-AI agents can't read binary documents. They need a bridge that's **context-aware**:
+AI agents need a bridge that's **context-aware**:
 
 - **Small file** → `shuck report.docx` → full Markdown on stdout
 - **Large file** → `shuck report.docx` → document map with sections and extraction options
