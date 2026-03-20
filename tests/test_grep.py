@@ -1,14 +1,11 @@
 """Tests for in-document search."""
 
-import sys
 import os
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin"))
-
-from core.grep import grep_document
-from extractors.csv_ext import CsvExtractor
+from shuck_file.core.grep import grep_document
+from shuck_file.extractors.csv_ext import CsvExtractor
 
 
 def _make_csv(content: str) -> Path:

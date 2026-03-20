@@ -1,15 +1,12 @@
 """Tests for auto-routing logic."""
 
-import sys
 import os
 import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin"))
-
-from core.router import route, DEFAULT_THRESHOLD
-from core.models import Result
+from shuck_file.core.router import route, DEFAULT_THRESHOLD
+from shuck_file.core.models import Result
 
 
 def _make_csv(content: str) -> Path:

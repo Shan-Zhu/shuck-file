@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Shan-Zhu/shuck-file",
+  "title": "shuck-file",
+  "description": "Any file in, Markdown out — read only what matters.",
+  "version": "2.0.4",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "shuck-file",
+      "version": "2.0.4",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/Shan-Zhu/shuck-file",
+    "source": "github"
+  }
+}

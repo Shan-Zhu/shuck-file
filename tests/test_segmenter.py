@@ -1,11 +1,6 @@
 """Tests for document segmentation."""
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin"))
-
-from core.segmenter import (
+from shuck_file.core.segmenter import (
     _classify_type,
     _classify_density,
     _make_section,

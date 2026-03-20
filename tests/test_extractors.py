@@ -1,15 +1,11 @@
 """Tests for extractor classes."""
 
-import sys
 import os
 import tempfile
 from pathlib import Path
 
-# Add plugin dir to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin"))
-
-from extractors import get_extractor, SUPPORTED_FORMATS
-from extractors.csv_ext import CsvExtractor
+from shuck_file.extractors import get_extractor, SUPPORTED_FORMATS
+from shuck_file.extractors.csv_ext import CsvExtractor
 
 
 class TestCsvExtractor:

@@ -8,3 +8,5 @@ build/
 *.egg-info/
 .eggs/
 .pytest_cache/
+src/*.egg-info/
+.mcpregistry_*

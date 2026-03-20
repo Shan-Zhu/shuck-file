@@ -1,12 +1,7 @@
 """Tests for budget compression."""
 
-import sys
-import os
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugin"))
-
-from core.budget import compress, _compress_narrative, _compress_table
-from core.models import Result, Section
+from shuck_file.core.budget import compress, _compress_narrative, _compress_table
+from shuck_file.core.models import Result, Section
 
 
 class TestCompressNarrative:
