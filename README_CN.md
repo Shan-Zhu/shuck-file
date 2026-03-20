@@ -10,7 +10,7 @@
 
 ## 为什么选 shuck-file？
 
-AI agent 无法读取二进制文档，它们需要一个**感知上下文**的桥梁：
+AI agent 需要一个**感知上下文**的桥梁：
 
 - **小文件** → `shuck report.docx` → 直接输出完整 Markdown
 - **大文件** → `shuck report.docx` → 返回文档地图，附带章节和提取选择
