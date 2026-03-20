@@ -1,7 +1,7 @@
 {
   "name": "shuck-file",
-  "version": "1.0.0",
-  "description": "Convert documents (.docx, .pdf, .xlsx, .pptx, .csv) to clean Markdown for AI agents and LLMs.",
+  "version": "2.0.0",
+  "description": "Smart document-to-Markdown conversion for AI agents. Auto-routes small files to direct output, large files to document maps with targeted extraction.",
   "author": { "name": "Shan" },
   "repository": "https://github.com/Shan-Zhu/shuck-file",
   "license": "MIT",

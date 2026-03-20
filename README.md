@@ -2,15 +2,16 @@
 
 > Feed any document to your AI agent — in one command.
 
-**shuck-file** converts documents to clean Markdown, designed for AI agents and LLMs. It outputs to stdout by default so agents can capture content directly, supports metadata probing for smart decision-making, and works as both a standalone CLI tool and a Claude Code plugin.
+**shuck-file** converts documents to clean Markdown for AI agents and LLMs. Small files output directly; large files return a **document map** with section summaries, token counts, and actionable next steps — so agents only pull what they need.
 
 ## Why shuck-file?
 
-AI agents can't read binary document formats. They need a bridge:
+AI agents can't read binary documents. They need a bridge that's **context-aware**:
 
-- **Agent can't read `.docx`** → `shuck report.docx` → clean Markdown on stdout
-- **Agent needs to check size first** → `shuck data.xlsx --meta` → JSON with token estimate
-- **Zero config** → no settings files, no output directories — just pipe and go
+- **Small file** → `shuck report.docx` → full Markdown on stdout
+- **Large file** → `shuck report.docx` → document map with sections and extraction options
+- **Targeted extraction** → `shuck report.docx --sections s1,s3` → only what you need
+- **Search** → `shuck report.docx --grep "revenue"` → find without reading everything
 
 ## Supported Formats
 
@@ -25,97 +26,128 @@ AI agents can't read binary document formats. They need a bridge:
 ## Quick Start
 
 ```bash
-# Clone
-git clone https://github.com/YourUsername/shuck-file.git
-
-# Install dependencies (or just the ones you need)
+git clone https://github.com/Shan-Zhu/shuck-file.git
 pip install -r requirements.txt
-
-# Convert
-python shuck.py report.docx
+python plugin/shuck.py report.docx
 ```
 
 ## Usage
 
-### CLI
+### Auto-Routing (default)
 
 ```bash
-# Convert to stdout (default, agent-friendly)
-python shuck.py document.pdf
+# Small file → direct Markdown output
+shuck document.pdf
 
-# Write to a specific file
-python shuck.py document.pdf -o output.md
+# Large file → document map with sections table + next steps
+shuck large-report.pdf
+```
 
-# Write to a directory (auto-named, collision-safe)
-python shuck.py document.pdf -d ./converted/
+### Extraction Options
 
-# Probe metadata before converting (agent workflow)
-python shuck.py spreadsheet.xlsx --meta
+```bash
+# Force full output (bypass map mode)
+shuck report.pdf --all
+
+# Extract specific sections
+shuck report.pdf --sections s1,s3
+
+# Tables only
+shuck report.pdf --tables-only
+
+# Search within document
+shuck report.pdf --grep "revenue"
+
+# Token budget (smart compression)
+shuck report.pdf --budget 4000
+
+# Combinations work
+shuck report.pdf --sections s2,s3 --budget 2000
+```
+
+### Excel/CSV Specific
+
+```bash
+# Column headers and types
+shuck data.xlsx --schema-only
+
+# Headers + first N rows
+shuck data.xlsx --sample 5
+```
+
+### Power User Subcommands
+
+```bash
+# Force map mode (even on small files)
+shuck probe document.docx
+
+# Force full extraction (alias for --all)
+shuck pull document.docx
+```
+
+### Output Control
+
+```bash
+# Write to file
+shuck document.pdf -o output.md
+
+# Write to directory (auto-named)
+shuck document.pdf -d ./converted/
 
 # Skip YAML frontmatter
-python shuck.py document.docx --no-frontmatter
+shuck document.pdf --no-frontmatter
 
 # List supported formats
-python shuck.py --formats
+shuck --formats
+```
+
+### Map Mode Output
+
+When a file is large, shuck returns a document map:
+
+```markdown
+# Document Map: quarterly-report.pdf
+
+**6 pages | ~12,400 tokens | 6 sections**
+
+## Sections
+
+| # | Title | Type | Tokens | Density |
+|---|-------|------|--------|---------|
+| s1 | Executive Summary | narrative | 450 | high |
+| s2 | Q3 Financial Results | mixed | 2,800 | high |
+| s3 | Revenue Breakdown | tabular | 3,200 | high |
+| ...
+
+## Next Steps
+
+- `shuck quarterly-report.pdf --all` -- full document (~12,400 tokens)
+- `shuck quarterly-report.pdf --sections s1,s2` -- high-density (~3,250 tokens)
+- `shuck quarterly-report.pdf --grep "..."` -- search for keywords
 ```
 
 ### Claude Code Plugin
 
-Install as a Claude Code plugin, then use the `/shuck` command:
+Install as a Claude Code plugin, then use `/shuck`:
 
 ```
 /shuck path/to/document.xlsx
 ```
 
-The skill also triggers automatically when you share or reference a supported document format in conversation.
-
-### Agent Integration
-
-The recommended agent workflow:
-
-```bash
-# 1. Probe — check file info and estimated token count
-python shuck.py report.xlsx --meta
-# → {"file": "report.xlsx", "format": "xlsx", "sheets": ["Sheet1", "Data"], "estimated_tokens": 3200}
-
-# 2. Convert — capture stdout directly
-python shuck.py report.xlsx
-# → Markdown with YAML frontmatter
-
-# 3. Analyze — process the content as needed
-```
-
-### Output Format
-
-By default, output includes YAML frontmatter:
-
-```markdown
----
-source: report.docx
-format: docx
-converted_by: shuck v1.0.0
----
-
-# Report Title
-
-Content here...
-```
-
-Use `--no-frontmatter` to omit it.
+The skill triggers automatically when you reference a supported document format.
 
 ## Installation
 
 ### As a Claude Code Plugin
 
 ```bash
-# Via Claude Code CLI
 claude plugin add /path/to/shuck-file
 ```
 
 ### Standalone
 
 ```bash
-git clone https://github.com/YourUsername/shuck-file.git
+git clone https://github.com/Shan-Zhu/shuck-file.git
 cd shuck-file
 pip install -r requirements.txt
 ```
@@ -138,6 +170,6 @@ MIT
 
 ## 中文简介
 
-**shuck-file** 是一个面向 AI agent 设计的文档转 Markdown 工具，支持 Word、PDF、Excel、PowerPoint 和 CSV 五种格式。
+**shuck-file** v2.0 是面向 AI agent 设��的智能文档转 Markdown 工具。小文件直接输出完整 Markdown；大文件自动返回**文档地图**，包含章节概览、token 估算和提取建议，让 agent 按需获取内容，节省上下文窗口。
 
-核心设计理念：**stdout 优先**（agent 直接捕获）、**`--meta` 元数据探查**（先了解文件再决策）、**零配置**（单命令即用）。既可作为命令行工具独立使用，也可作为 Claude Code 插件自动触发。
+支持 Word、PDF、Excel、PowerPoint 和 CSV 五种格式。新增 `--sections`、`--grep`、`--budget`、`--tables-only`、`--schema-only`、`--sample` 等精细提取选项。

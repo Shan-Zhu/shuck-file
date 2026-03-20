@@ -5,104 +5,58 @@ description: Use when the user provides or references .docx, .pdf, .xlsx, .pptx,
 
 # File Conversion Skill
 
-Convert documents to clean Markdown that AI agents can read and analyze.
+Convert documents to clean Markdown. Small files output directly; large files return a document map with extraction options.
 
 ## When to Use
 
 - User shares or references a `.docx`, `.pdf`, `.xlsx`, `.pptx`, or `.csv` file
 - User asks to "read", "analyze", "summarize", or "extract" content from a document
 - You encounter a binary file format you cannot read directly
-- User asks to convert a document to Markdown
 
 ## When NOT to Use
 
-- Plain text files (`.txt`, `.md`, `.json`, `.yaml`) — read these directly
-- Source code files — read these directly
-- Image files (`.png`, `.jpg`) — use vision capabilities instead
-- The user just wants to copy/move/rename a file
+- Plain text files (`.txt`, `.md`, `.json`, `.yaml`) — read directly
+- Source code files — read directly
+- Image files — use vision capabilities instead
 
-## Supported Formats
+## Workflow
 
-| Format | Extension | What's Preserved |
-|--------|-----------|-----------------|
-| Word | `.docx` | Headings, bold/italic, lists, tables |
-| PDF | `.pdf` | Text content, page breaks |
-| Excel | `.xlsx` | All sheets, cell data as tables |
-| PowerPoint | `.pptx` | Slide titles, text, tables, notes |
-| CSV | `.csv` | All rows/columns as a table |
-
-## Agent Workflow (Recommended)
-
-### Step 1: Probe with `--meta`
+### 1. Run shuck
 
 ```bash
-python "{{PLUGIN_DIR}}/shuck.py" "document.xlsx" --meta
+python "{{PLUGIN_DIR}}/shuck.py" "<path>"
 ```
 
-Returns JSON with file info and estimated token count. Use this to decide whether to convert the full file or warn the user about large documents.
+- **Small file** → full Markdown output (use directly)
+- **Large file** → document map with sections, token counts, and suggested next steps
 
-### Step 2: Convert
+### 2. Follow the map (large files only)
 
-```bash
-python "{{PLUGIN_DIR}}/shuck.py" "document.xlsx"
-```
-
-Output goes to stdout with YAML frontmatter. Capture directly — no need to write to a file first.
-
-### Step 3: Analyze
-
-Process the Markdown content as needed (summarize, extract data, answer questions, etc.).
-
-## Command Reference
+The map suggests commands. Pick based on the task:
 
 ```bash
-# Default: convert to stdout (agent-friendly)
-python shuck.py <file>
+# Get specific sections
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --sections s1,s3
 
-# Write to specific file
-python shuck.py <file> -o output.md
+# Search for keywords
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --grep "revenue"
 
-# Write to directory (auto-named, collision-safe)
-python shuck.py <file> -d ./output/
+# Tables only
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --tables-only
 
-# JSON metadata (probe before converting)
-python shuck.py <file> --meta
+# Fit within a token budget
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --budget 4000
 
-# Skip YAML frontmatter
-python shuck.py <file> --no-frontmatter
+# Force full output
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --all
 
-# List supported formats
-python shuck.py --formats
+# Excel/CSV: schema or sample
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --schema-only
+python "{{PLUGIN_DIR}}/shuck.py" "<path>" --sample 5
 ```
 
 ## Installing Dependencies
 
-Only install what you need:
-
 ```bash
-# Word (.docx)
-pip install python-docx
-
-# PDF (.pdf)
-pip install pdfplumber
-
-# Excel (.xlsx)
-pip install openpyxl
-
-# PowerPoint (.pptx)
-pip install python-pptx
-
-# CSV — no extra dependencies needed (stdlib)
-
-# All formats at once
 pip install python-docx pdfplumber openpyxl python-pptx
 ```
-
-## Common Errors
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `Missing dependency: X` | Required library not installed | Run the `pip install` command shown in the error |
-| `unsupported format` | File extension not in supported list | Check `--formats` for supported types |
-| `file not found` | Path doesn't exist or has typos | Verify path; quote paths with spaces |
-| Empty/garbled output from PDF | Scanned PDF (image-based) | This tool extracts text only; suggest OCR tools |

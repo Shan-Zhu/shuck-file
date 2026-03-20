@@ -10,9 +10,9 @@
   "plugins": [
     {
       "name": "shuck-file",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "source": "./plugin",
-      "description": "Convert documents (.docx, .pdf, .xlsx, .pptx, .csv) to clean Markdown for AI agents and LLMs."
+      "description": "Smart document-to-Markdown conversion for AI agents. Auto-routes small files to direct output, large files to document maps with targeted extraction."
     }
   ]
 }
